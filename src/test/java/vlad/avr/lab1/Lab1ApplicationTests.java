@@ -2,12 +2,15 @@ package vlad.avr.lab1;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import vlad.avr.lab1.util.PowHelper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 class Lab1ApplicationTests {
 
 	@Test
-	void contextLoads() {
+	void testPowHelper() {
+		assertEquals(9, PowHelper.pow(3,2));
 	}
 
 }

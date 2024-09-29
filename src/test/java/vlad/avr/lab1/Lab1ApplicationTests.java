@@ -10,7 +10,7 @@ class Lab1ApplicationTests {
 
 	@Test
 	void testPowHelper() {
-		assertEquals(6, PowHelper.pow(3,2));
+		assertEquals(9, PowHelper.pow(3,2));
 	}
 
 }

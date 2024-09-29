@@ -25,3 +25,10 @@ jobs:
         with:
           name: my-artifact
           path: target/*.jar
+      - name: Run tests
+        run: mvn test
+      - name: Upload test reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: target/surefire-reports/*.xml

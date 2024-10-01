@@ -35,5 +35,5 @@ jobs:
       - name: SonarQube Scan
         run: mvn sonar:sonar
         env:
-          SONAR_HOST_URL: http://localhost:9001
+          SONAR_HOST_URL: http://localhost:9000
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

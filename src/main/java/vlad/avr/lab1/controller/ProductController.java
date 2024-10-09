@@ -19,8 +19,7 @@ public class ProductController {
         private int id;
         private String name;
 
-        public Product(int id, String name) {
-            //Comment for testing
+        public Product(int id, String name){
             this.id = id;
             this.name = name;
         }

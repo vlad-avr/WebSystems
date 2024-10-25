@@ -1,8 +1,17 @@
 services:
+  server:
+    container_name: server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
   prometheus:
     image: prom/prometheus:v2.35.0
     container_name: prometheus
     restart: unless-stopped
+    depends_on:
+      - server
     volumes:
       - ./data/prometheus/config:/etc/prometheus/
     command:
@@ -15,6 +24,8 @@ services:
     pull_policy: always
     container_name: grafana
     restart: unless-stopped
+    depends_on:
+      - prometheus
     volumes:
       - ./data/grafana:/var/lib/grafana
     environment:

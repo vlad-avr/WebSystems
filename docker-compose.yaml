@@ -1,3 +1,5 @@
+version: '3'
+
 services:
   server:
     container_name: server
@@ -5,23 +7,27 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - 8080:8080
+      - "8080:8080"
+    networks:
+      - monitoring  # підключаємо до спільної мережі
+
   prometheus:
     image: prom/prometheus:v2.35.0
     container_name: prometheus
     restart: unless-stopped
     depends_on:
-      - server
+      - k6
     volumes:
       - ./data/prometheus/config:/etc/prometheus/
     command:
       - '--config.file=/etc/prometheus/prometheus.yaml'
     ports:
       - "9090:9090"
+    networks:
+      - monitoring
 
   grafana:
     image: grafana/grafana-oss:8.5.2
-    pull_policy: always
     container_name: grafana
     restart: unless-stopped
     depends_on:
@@ -33,3 +39,23 @@ services:
       - GF_SERVER_DOMAIN=localhost
     ports:
       - "3000:3000"
+    networks:
+      - monitoring  # підключаємо до спільної мережі
+
+  k6:
+    image: grafana/k6:latest
+    container_name: k6
+    depends_on:
+      - server
+    restart: unless-stopped
+    networks:
+      - monitoring
+    command: run --out experimental-prometheus-rw=http://prometheus:9090 /src/test/performance/performance-test.js
+    volumes:
+      - ./src/test/performance:/src/test/performance
+    ports:
+      - "6565:6565"  # Expose the k6 Prometheus metrics endpoint
+
+networks:
+  monitoring:
+    driver: bridge  # спільна мережа для контейнерів

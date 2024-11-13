@@ -46,7 +46,13 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install k6
-        run: sudo apt-get install -y k6
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gnupg software-properties-common ca-certificates curl
+          curl -s https://dl.k6.io/key.gpg | sudo apt-key add -
+          echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update
+          sudo apt-get install -y k6
 
       - name: Run k6 performance test
         run: k6 run --out json=results.json ./src/test/performance/performance-test.js

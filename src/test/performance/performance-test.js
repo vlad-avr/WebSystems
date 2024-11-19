@@ -30,8 +30,21 @@ export let options = {
 };
 
 export default function () {
-    let res = http.get('http://server:8080/something');
+    // let res = http.get('http://server:8080/something');
+    // check(res, { 'successful get' : (r) => r.status === 200 });
+    // // Think time: random pause between requests (up to 5 seconds)
+    // sleep(Math.random() * 5);
+    let productId = "12345"; // Використовуйте будь-який ID для продукту
+    let res = http.get(`http://localhost:8080/products/${productId}`);
+    
+    // Перевірка, чи був запит успішним
     check(res, { 'successful get' : (r) => r.status === 200 });
-    // Think time: random pause between requests (up to 5 seconds)
-    sleep(Math.random() * 5);
+    
+    // Вивести час відповіді, щоб оцінити продуктивність
+    console.log(`Response time: ${res.timings.duration} ms`);
+
+    // Тестування кешування: Виконуємо ще один запит до того ж продукту
+    let cachedRes = http.get(`http://localhost:8080/products/${productId}`);
+    check(cachedRes, { 'successful get from cache' : (r) => r.status === 200 });
+    console.log(`Response time for cached request: ${cachedRes.timings.duration} ms`);
 }

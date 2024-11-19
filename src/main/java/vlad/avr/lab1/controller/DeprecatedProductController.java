@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RestController;
 import vlad.avr.lab1.util.PowHelper;
 
 @RestController
-public class ProductController {
+public class DeprecatedProductController {
 
-    @GetMapping("/products/{productId}")
+    @GetMapping("/product/{productId}")
     public Product getProduct(@PathVariable int productId) {
         return new Product(productId, PowHelper.pow(productId, productId) + " name");
     }

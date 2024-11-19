@@ -1,5 +1,5 @@
 import http from 'k6/http';
-import { sleep } from 'k6';
+import { sleep, check } from 'k6';
 
 export let options = {
     scenarios: {
@@ -12,17 +12,26 @@ export let options = {
             executor: 'ramping-vus',
             startVUs: 0,
             stages: [
-                { duration: '30s', target: 50 }, // до 50 користувачів за 30 секунд
-                { duration: '1m', target: 50 },  // тримаємо навантаження
-                { duration: '30s', target: 0 },  // зменшення до нуля
+                { duration: '30s', target: 50 }, // Ramp up to 50 users in 30 seconds
+                { duration: '1m', target: 50 },  // Hold at 50 users for 1 minute
+                { duration: '30s', target: 0 },  // Ramp down to 0 users in 30 seconds
             ],
             gracefulRampDown: '30s',
+        },
+        constant_arrival_rate_test: {
+            executor: 'constant-arrival-rate',
+            rate: 20, // 20 iterations per second
+            timeUnit: '1s', // time unit for the rate
+            duration: '1m', // run the test for 1 minute
+            preAllocatedVUs: 50, // number of VUs to be pre-allocated
+            maxVUs: 100, // max number of VUs that can be used
         },
     },
 };
 
 export default function () {
-    http.get('http://server:8080/something');
-    // Think time: пауза між запитами (випадкова пауза до 5 секунд)
+    let res = http.get('http://server:8080/something');
+    check(res, { 'successful get' : (r) => r.status === 200 });
+    // Think time: random pause between requests (up to 5 seconds)
     sleep(Math.random() * 5);
 }
